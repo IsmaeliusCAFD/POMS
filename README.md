@@ -35,3 +35,7 @@ La puntuación se expresa sobre 100 mediante una regla de tres.
 ## Nota
 
 Esta aplicación está planteada para uso educativo. No constituye por sí misma una herramienta de diagnóstico psicológico.
+
+
+### PDF de resultados
+Al finalizar el cuestionario se puede generar un PDF con las puntuaciones, porcentajes y la gráfica de resultados. La generación utiliza jsPDF mediante CDN.

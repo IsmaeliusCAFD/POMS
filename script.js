@@ -41,7 +41,9 @@
     [4, "Muchísimo"]
   ];
 
-  const dimensions = ["TENSIÓN", "DEPRESIÓN", "CÓLERA", "VIGOR", "FATIGA"];
+  let lastResults = null;
+
+const dimensions = ["TENSIÓN", "DEPRESIÓN", "CÓLERA", "VIGOR", "FATIGA"];
 
   const maxScores = {
     "TENSIÓN": 24,
@@ -298,3 +300,69 @@
     window.scrollTo({ top: 0, behavior: "smooth" });
   });
 })();
+
+
+function downloadPDF() {
+  if (!lastResults || !window.jspdf) return;
+
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF({ unit: "mm", format: "a4" });
+
+  doc.setFontSize(20);
+  doc.text("Resultados POMS", 20, 22);
+
+  doc.setFontSize(10);
+  doc.text("Versión española del POMS · Perfil de estado de ánimo", 20, 29);
+  doc.text(new Date().toLocaleString("es-ES"), 20, 35);
+
+  let y = 48;
+  doc.setFontSize(13);
+  doc.text("Puntuaciones", 20, y);
+  y += 9;
+  doc.setFontSize(11);
+
+  dimensions.forEach(d => {
+    const score = lastResults.totals[d.key];
+    const max = maxScores[d.key];
+    const pct = lastResults.percentages[d.key];
+    doc.text(`${d.label}: ${score}/${max} — ${pct}%`, 25, y);
+    y += 7;
+  });
+
+  y += 5;
+  doc.setFontSize(13);
+  doc.text("Perfil gráfico", 20, y);
+  y += 6;
+
+  const svg = document.querySelector("#chart");
+  const svgString = new XMLSerializer().serializeToString(svg);
+  const blob = new Blob([svgString], { type: "image/svg+xml;charset=utf-8" });
+  const url = URL.createObjectURL(blob);
+  const img = new Image();
+
+  img.onload = function () {
+    const canvas = document.createElement("canvas");
+    canvas.width = 1200;
+    canvas.height = 650;
+    const ctx = canvas.getContext("2d");
+    ctx.fillStyle = "#ffffff";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+    doc.addImage(canvas.toDataURL("image/png"), "PNG", 20, y, 170, 92);
+    y += 102;
+
+    doc.setFontSize(9);
+    doc.text("Puntuaciones ponderadas sobre 100 según los máximos de cada factor.", 20, y);
+    doc.text("Uso educativo. Este resultado no constituye un diagnóstico clínico.", 20, y + 6);
+
+    doc.save("resultados-POMS.pdf");
+    URL.revokeObjectURL(url);
+  };
+
+  img.src = url;
+}
+
+const pdfBtn = document.getElementById("pdfBtn");
+
+pdfBtn.addEventListener("click", downloadPDF);

@@ -6,6 +6,7 @@
   <meta name="description" content="Cuestionario POMS - Perfil del estado de ánimo">
   <title>POMS — Perfil del estado de ánimo</title>
   <link rel="stylesheet" href="style.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 </head>
 <body>
   <main class="app">
@@ -76,7 +77,8 @@
         Tensión sobre 24, Depresión/Vigor/Fatiga sobre 20 y Cólera sobre 32.
       </div>
 
-      <button id="again" class="primary">Repetir cuestionario</button>
+      <button id="pdfBtn" class="secondary-btn" type="button">Descargar resultados en PDF</button>
+          <button id="again" class="primary">Repetir cuestionario</button>
     </section>
   </main>
 
