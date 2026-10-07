@@ -39,3 +39,8 @@ Esta aplicación está planteada para uso educativo. No constituye por sí misma
 
 ### PDF de resultados
 Al finalizar el cuestionario se puede generar un PDF con las puntuaciones, porcentajes y la gráfica de resultados. La generación utiliza jsPDF mediante CDN.
+
+
+### Funciones añadidas
+- Descarga de resultados mediante la ventana de impresión del navegador, desde la que se puede elegir «Guardar como PDF».
+- Vista de respuestas ordenadas por Tensión, Depresión, Cólera, Vigor y Fatiga, mostrando la opción elegida (0–4).

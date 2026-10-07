@@ -1,3 +1,12 @@
+
+  const pdfBtn = document.getElementById("pdfBtn");
+  const reviewBtn = document.getElementById("reviewBtn");
+  const closeReview = document.getElementById("closeReview");
+  if (pdfBtn) pdfBtn.addEventListener("click", downloadPDF);
+  if (reviewBtn) reviewBtn.addEventListener("click", showReview);
+  if (closeReview) closeReview.addEventListener("click", () => {
+    document.getElementById("reviewPanel").classList.add("hidden");
+  });
 (() => {
   "use strict";
 
@@ -300,69 +309,99 @@ const dimensions = ["TENSIÓN", "DEPRESIÓN", "CÓLERA", "VIGOR", "FATIGA"];
     window.scrollTo({ top: 0, behavior: "smooth" });
   });
 })();
+const pomsCategories = {
+  "Tensión": [1, 8, 11, 18, 21, 28],
+  "Depresión": [3, 6, 13, 23, 26],
+  "Cólera": [4, 9, 12, 14, 16, 19, 24, 29],
+  "Vigor": [2, 7, 17, 22, 27],
+  "Fatiga": [5, 10, 15, 20, 25]
+};
+
+const pomsItemTexts = [
+  "Intranquilo","Enérgico","Desamparado","Furioso","Sin fuerzas","Deprimido",
+  "Lleno de energía","Inquieto","Molesto","Agotado","Agitado","Luchador",
+  "Desdichado","Irritable","Cansado","Amargado","Animado","Nervioso",
+  "Enfadado","Exhausto","Tenso","Vigoroso","Triste","Enojado","Fatigado",
+  "Infeliz","Activo","Relajado","De mal genio"
+];
+
+function getAnswerValue(itemNumber) {
+  const idx = itemNumber - 1;
+  if (Array.isArray(answers)) return answers[idx];
+  if (answers && typeof answers === "object") {
+    return answers[idx] ?? answers[itemNumber] ?? null;
+  }
+  return null;
+}
+
+function getAnswerLabel(value) {
+  const labels = ["Nada", "Un poco", "Moderadamente", "Bastante", "Muchísimo"];
+  return labels[Number(value)] ?? "Sin respuesta";
+}
+
+function showReview() {
+  const panel = document.getElementById("reviewPanel");
+  const content = document.getElementById("reviewContent");
+  if (!panel || !content) return;
+
+  content.innerHTML = Object.entries(pomsCategories).map(([category, items]) => {
+    const list = items.map(n => {
+      const value = getAnswerValue(n);
+      return `<div class="review-item">
+        <div class="review-question">${n}. ${pomsItemTexts[n-1]}</div>
+        <div class="review-answer">${getAnswerLabel(value)} <span>(${value ?? "—"})</span></div>
+      </div>`;
+    }).join("");
+    return `<div class="review-category"><h3>${category}</h3>${list}</div>`;
+  }).join("");
+
+  panel.classList.remove("hidden");
+  panel.scrollIntoView({behavior:"smooth", block:"start"});
+}
 
 
 function downloadPDF() {
-  if (!lastResults || !window.jspdf) return;
+  if (!lastResults) return;
 
-  const { jsPDF } = window.jspdf;
-  const doc = new jsPDF({ unit: "mm", format: "a4" });
+  const printWindow = window.open("", "_blank");
+  if (!printWindow) {
+    alert("El navegador ha bloqueado la ventana del PDF. Permite ventanas emergentes para esta página.");
+    return;
+  }
 
-  doc.setFontSize(20);
-  doc.text("Resultados POMS", 20, 22);
-
-  doc.setFontSize(10);
-  doc.text("Versión española del POMS · Perfil de estado de ánimo", 20, 29);
-  doc.text(new Date().toLocaleString("es-ES"), 20, 35);
-
-  let y = 48;
-  doc.setFontSize(13);
-  doc.text("Puntuaciones", 20, y);
-  y += 9;
-  doc.setFontSize(11);
-
-  dimensions.forEach(d => {
+  const rows = dimensions.map(d => {
     const score = lastResults.totals[d.key];
     const max = maxScores[d.key];
     const pct = lastResults.percentages[d.key];
-    doc.text(`${d.label}: ${score}/${max} — ${pct}%`, 25, y);
-    y += 7;
-  });
-
-  y += 5;
-  doc.setFontSize(13);
-  doc.text("Perfil gráfico", 20, y);
-  y += 6;
+    return `<tr><td>${d.label}</td><td>${score} / ${max}</td><td>${pct}%</td></tr>`;
+  }).join("");
 
   const svg = document.querySelector("#chart");
-  const svgString = new XMLSerializer().serializeToString(svg);
-  const blob = new Blob([svgString], { type: "image/svg+xml;charset=utf-8" });
-  const url = URL.createObjectURL(blob);
-  const img = new Image();
+  const chart = svg ? new XMLSerializer().serializeToString(svg) : "";
 
-  img.onload = function () {
-    const canvas = document.createElement("canvas");
-    canvas.width = 1200;
-    canvas.height = 650;
-    const ctx = canvas.getContext("2d");
-    ctx.fillStyle = "#ffffff";
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+  printWindow.document.write(`<!doctype html><html><head><meta charset="utf-8">
+  <title>Resultados POMS</title>
+  <style>
+    body{font-family:Arial,sans-serif;margin:35px;color:#111}
+    h1{margin-bottom:5px} .date{color:#666;margin-bottom:25px}
+    table{width:100%;border-collapse:collapse;margin:20px 0}
+    th,td{border:1px solid #ccc;padding:9px;text-align:left}
+    th{background:#f2f2f2}
+    .chart{width:100%;max-width:850px;margin-top:15px}
+    .note{font-size:11px;color:#666;margin-top:20px}
+    @media print{body{margin:15mm}}
+  </style></head><body>
+  <h1>Resultados POMS</h1>
+  <div class="date">Versión española del POMS · ${new Date().toLocaleString("es-ES")}</div>
+  <h2>Puntuaciones</h2>
+  <table><thead><tr><th>Emoción</th><th>Puntuación</th><th>Porcentaje</th></tr></thead><tbody>${rows}</tbody></table>
+  <h2>Perfil gráfico</h2>
+  <div class="chart">${chart}</div>
+  <p class="note">Puntuaciones ponderadas sobre 100 según los máximos de cada factor. Uso educativo; no constituye un diagnóstico clínico.</p>
+  <script>window.onload=function(){setTimeout(function(){window.print()},500)}<\/script>
+  </body></html>`);
 
-    doc.addImage(canvas.toDataURL("image/png"), "PNG", 20, y, 170, 92);
-    y += 102;
-
-    doc.setFontSize(9);
-    doc.text("Puntuaciones ponderadas sobre 100 según los máximos de cada factor.", 20, y);
-    doc.text("Uso educativo. Este resultado no constituye un diagnóstico clínico.", 20, y + 6);
-
-    doc.save("resultados-POMS.pdf");
-    URL.revokeObjectURL(url);
-  };
-
-  img.src = url;
+  printWindow.document.close();
 }
 
-const pdfBtn = document.getElementById("pdfBtn");
 
-pdfBtn.addEventListener("click", downloadPDF);
