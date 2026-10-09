@@ -532,3 +532,78 @@ button.primary,
   }
   .scale-info span { font-size: .52rem; }
 }
+
+
+/* Ajuste móvil de la escala POMS: evitar cortes de palabras como "moderadamen / te". */
+.scale-options,
+.scale,
+.likert-scale,
+.rating-options,
+.answer-options {
+  min-width: 0;
+}
+
+.scale-options button,
+.scale button,
+.likert-scale button,
+.rating-options button,
+.answer-options button,
+.scale-options label,
+.scale label,
+.likert-scale label,
+.rating-options label,
+.answer-options label {
+  min-width: 0;
+  word-break: normal !important;
+  overflow-wrap: normal !important;
+  hyphens: none !important;
+  text-align: center;
+}
+
+@media (max-width: 600px) {
+  .scale-options,
+  .scale,
+  .likert-scale,
+  .rating-options,
+  .answer-options {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+  }
+
+  .scale-options button,
+  .scale button,
+  .likert-scale button,
+  .rating-options button,
+  .answer-options button,
+  .scale-options label,
+  .scale label,
+  .likert-scale label,
+  .rating-options label,
+  .answer-options label {
+    width: 100%;
+    min-height: 48px;
+    padding: 9px 7px;
+    white-space: normal !important;
+    font-size: clamp(0.78rem, 3.5vw, 0.95rem);
+    line-height: 1.2;
+    box-sizing: border-box;
+  }
+}
+
+/* Evita que el texto se rompa en fragmentos dentro de cualquier opción. */
+@media (max-width: 380px) {
+  .scale-options button,
+  .scale button,
+  .likert-scale button,
+  .rating-options button,
+  .answer-options button,
+  .scale-options label,
+  .scale label,
+  .likert-scale label,
+  .rating-options label,
+  .answer-options label {
+    font-size: 0.76rem;
+    letter-spacing: -0.01em;
+  }
+}

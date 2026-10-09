@@ -47,3 +47,10 @@ Al finalizar el cuestionario se puede generar un PDF con las puntuaciones, porce
 
 
 Versión corregida: las respuestas del encuestado se conservan durante todo el cuestionario y aparecen correctamente tanto en la vista ordenada como en el documento imprimible para guardar como PDF.
+
+
+## Instalar como aplicación en el móvil
+La web incluye soporte PWA y un icono POMS. Tras publicar los archivos en GitHub Pages y abrir la web mediante HTTPS:
+- **iPhone/iPad:** Safari → botón Compartir → **Añadir a pantalla de inicio**.
+- **Android:** Chrome → menú ⋮ → **Instalar aplicación** o **Añadir a pantalla de inicio**.
+La primera visita debe hacerse con conexión para que se guarde la aplicación y sus archivos básicos.
