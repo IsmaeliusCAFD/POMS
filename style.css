@@ -607,3 +607,25 @@ button.primary,
     letter-spacing: -0.01em;
   }
 }
+
+
+/* Escala móvil: etiquetas cortas y palabras completas */
+@media (max-width: 600px) {
+  .scale-options button,
+  .scale button,
+  .likert-scale button,
+  .rating-options button,
+  .answer-options button,
+  .scale-options label,
+  .scale label,
+  .likert-scale label,
+  .rating-options label,
+  .answer-options label {
+    overflow-wrap: normal !important;
+    word-break: keep-all !important;
+    hyphens: none !important;
+    font-size: clamp(0.74rem, 3.3vw, 0.9rem);
+    padding-left: 5px;
+    padding-right: 5px;
+  }
+}

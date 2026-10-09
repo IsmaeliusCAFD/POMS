@@ -1,4 +1,4 @@
-const CACHE_NAME = "poms-app-v1";
+const CACHE_NAME = "poms-app-v2";
 const APP_SHELL = [
   "./",
   "./index.html",

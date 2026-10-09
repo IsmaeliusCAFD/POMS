@@ -36,7 +36,7 @@
   const scale = [
     [0, "Nada"],
     [1, "Un poco"],
-    [2, "Moderadamente"],
+    [2, "Regular"],
     [3, "Bastante"],
     [4, "Muchísimo"]
   ];
@@ -321,7 +321,7 @@ const pomsItemTexts = [
   "Infeliz","Activo","Relajado","De mal genio"
 ];
 
-const pomsScaleLabels = ["Nada","Un poco","Moderadamente","Bastante","Muchísimo"];
+const pomsScaleLabels = ["Nada","Un poco","Regular","Bastante","Muchísimo"];
 
 function getAnswerValue(itemNumber) {
   const r = window.pomsResponses || [];
