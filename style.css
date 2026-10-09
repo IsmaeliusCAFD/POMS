@@ -313,3 +313,222 @@ footer {
     grid-template-columns: repeat(2, 1fr);
   }
 }
+
+.secondary-btn {
+  margin: 10px 8px 0 0;
+  padding: 12px 18px;
+  border: 1px solid #cbd5e1;
+  border-radius: 10px;
+  background: #fff;
+  color: #1e293b;
+  cursor: pointer;
+  font-weight: 600;
+}
+.secondary-btn:hover { background: #f8fafc; }
+
+.review-panel {
+  margin-top: 24px;
+  padding: 22px;
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  background: #fff;
+}
+.hidden { display: none !important; }
+.review-header {
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  margin-bottom:18px;
+}
+.review-category {
+  margin: 18px 0 24px;
+}
+.review-category h3 {
+  margin-bottom: 10px;
+}
+.review-item {
+  display:flex;
+  justify-content:space-between;
+  gap:18px;
+  padding:10px 12px;
+  border-bottom:1px solid #edf2f7;
+}
+.review-question { font-weight:600; }
+.review-answer { white-space:nowrap; }
+.review-answer span { opacity:.65; }
+.secondary-btn {
+  margin: 8px 8px 0 0;
+  padding: 12px 18px;
+  border: 1px solid #cbd5e1;
+  border-radius: 10px;
+  background: #fff;
+  color: #1e293b;
+  cursor: pointer;
+  font-weight: 600;
+}
+.secondary-btn:hover { background:#f8fafc; }
+@media (max-width: 650px) {
+  .review-item { display:block; }
+  .review-answer { margin-top:5px; }
+}
+
+/* Ajustes de diseño */
+:root {
+  --poms-primary: #2563eb;
+}
+
+.primary,
+button.primary,
+#again {
+  background: var(--poms-primary) !important;
+  border-color: var(--poms-primary) !important;
+  color: #fff !important;
+  min-height: 44px;
+  padding: 12px 20px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1.2;
+  box-sizing: border-box;
+}
+
+.secondary-btn {
+  margin: 10px 10px 0 0 !important;
+  min-height: 44px;
+  padding: 12px 20px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1.2;
+  box-sizing: border-box;
+}
+
+.results-actions,
+.action-buttons,
+.button-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+}
+
+.review-header {
+  gap: 16px !important;
+}
+
+.review-header .secondary-btn {
+  margin: 0 !important;
+}
+
+
+/* Tres botones de resultados: siempre una sola fila */
+.results-actions { display:flex !important; flex-direction:row !important; flex-wrap:nowrap !important; justify-content:center !important; align-items:center !important; gap:12px !important; width:100% !important; }
+.results-actions > button { flex:1 1 0 !important; width:auto !important; min-width:0 !important; min-height:48px !important; height:48px !important; margin:0 !important; display:inline-flex !important; align-items:center !important; justify-content:center !important; text-align:center !important; white-space:nowrap !important; box-sizing:border-box !important; }
+@media (max-width:520px){ .results-actions{gap:6px !important;} .results-actions > button{font-size:.82rem !important; padding:0 5px !important;} }
+
+/* Ajuste final: el botón PDF necesita más ancho para que el texto no se corte */
+.results-actions > button {
+  min-height: 48px;
+  box-sizing: border-box;
+}
+.results-actions > button:nth-child(1) {
+  min-width: 205px;
+}
+.results-actions > button:nth-child(2),
+.results-actions > button:nth-child(3) {
+  min-width: 170px;
+}
+.results-actions > button {
+  white-space: nowrap;
+  padding-left: 14px;
+  padding-right: 14px;
+}
+
+
+/* ===== AJUSTE DEFINITIVO DE BOTONES Y MÓVIL ===== */
+.results-actions {
+  display: flex !important;
+  flex-direction: row !important;
+  flex-wrap: nowrap !important;
+  align-items: stretch !important;
+  justify-content: center !important;
+  gap: 12px !important;
+  width: 100% !important;
+}
+
+.results-actions > button {
+  flex: 1 1 0 !important;
+  min-width: 0 !important;
+  width: auto !important;
+  height: 50px !important;
+  min-height: 50px !important;
+  margin: 0 !important;
+  padding: 8px 12px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  text-align: center !important;
+  white-space: normal !important;
+  line-height: 1.15 !important;
+  overflow: hidden !important;
+}
+
+/* El PDF necesita más espacio, pero los tres siguen en la misma fila. */
+.results-actions > #pdfBtn {
+  flex: 1.35 1 0 !important;
+}
+
+/* Evita que las etiquetas largas de la escala se salgan de sus cajones. */
+.scale-info div {
+  min-width: 0;
+  overflow: hidden;
+}
+.scale-info span {
+  display: block;
+  overflow-wrap: anywhere;
+  word-break: normal;
+  line-height: 1.15;
+}
+
+@media (max-width: 560px) {
+  .scale-info {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 4px;
+    margin: 20px 0;
+  }
+  .scale-info div {
+    padding: 9px 2px;
+    border-radius: 10px;
+  }
+  .scale-info b {
+    font-size: 1rem;
+    margin-bottom: 4px;
+  }
+  .scale-info span {
+    font-size: .56rem;
+    line-height: 1.1;
+  }
+
+  .results-actions {
+    gap: 5px !important;
+  }
+  .results-actions > button {
+    height: 52px !important;
+    min-height: 52px !important;
+    padding: 6px 4px !important;
+    font-size: .70rem !important;
+    line-height: 1.1 !important;
+    border-radius: 9px !important;
+  }
+}
+
+@media (max-width: 380px) {
+  .results-actions { gap: 4px !important; }
+  .results-actions > button {
+    font-size: .64rem !important;
+    padding-left: 3px !important;
+    padding-right: 3px !important;
+  }
+  .scale-info span { font-size: .52rem; }
+}

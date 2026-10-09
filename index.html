@@ -76,9 +76,18 @@
         Tensión sobre 24, Depresión/Vigor/Fatiga sobre 20 y Cólera sobre 32.
       </div>
 
-      <button id="again" class="primary">Repetir cuestionario</button>
+      <div class="results-actions"><button id="pdfBtn" class="secondary-btn" type="button">Descargar PDF</button>
+          <button id="reviewBtn" class="secondary-btn" type="button">Ver respuestas ordenadas</button>
+          <button id="again" class="primary" type="button">Repetir cuestionario</button></div>
     </section>
-  </main>
+  <section id="reviewPanel" class="review-panel hidden">
+  <div class="review-header">
+    <h2>Respuestas ordenadas por emoción</h2>
+    <button id="closeReview" class="secondary-btn" type="button">Cerrar</button>
+  </div>
+  <div id="reviewContent"></div>
+</section>
+</main>
 
   <footer>
     Aplicación POMS · Uso educativo

@@ -13,7 +13,7 @@
     ["Molesto", "CÓLERA"],
     ["Agotado", "FATIGA"],
     ["Agitado", "TENSIÓN"],
-    ["Luchador", "VIGOR"],
+    ["Luchador", "CÓLERA"],
     ["Desdichado", "DEPRESIÓN"],
     ["Irritable", "CÓLERA"],
     ["Cansado", "FATIGA"],
@@ -41,7 +41,9 @@
     [4, "Muchísimo"]
   ];
 
-  const dimensions = ["TENSIÓN", "DEPRESIÓN", "CÓLERA", "VIGOR", "FATIGA"];
+  let lastResults = null;
+
+const dimensions = ["TENSIÓN", "DEPRESIÓN", "CÓLERA", "VIGOR", "FATIGA"];
 
   const maxScores = {
     "TENSIÓN": 24,
@@ -130,7 +132,9 @@
     return Object.fromEntries(
       dimensions.map(dimension => [
         dimension,
-        Math.round((totals[dimension] / maxScores[dimension]) * 1000) / 10
+        Math.max(0, Math.min(100,
+          Math.round((totals[dimension] / maxScores[dimension]) * 1000) / 10
+        ))
       ])
     );
   }
@@ -194,7 +198,7 @@
       rect.setAttribute("width", barWidth);
       rect.setAttribute("height", barHeight);
       rect.setAttribute("rx", "9");
-      rect.setAttribute("fill", "currentColor");
+      rect.setAttribute("fill", "#2563eb");
       rect.setAttribute("opacity", ".78");
       svg.appendChild(rect);
 
@@ -245,6 +249,8 @@
 
   function showResults() {
     const scores = calculateScores();
+    window.pomsResponses = responses.slice();
+    window.pomsScores = { ...scores };
 
     drawChart(scores);
     renderScoreCards(scores);
@@ -298,3 +304,119 @@
     window.scrollTo({ top: 0, behavior: "smooth" });
   });
 })();
+
+const pomsCategories = {
+  "TENSIÓN": [1, 8, 11, 18, 21, 28],
+  "DEPRESIÓN": [3, 6, 13, 23, 26],
+  "CÓLERA": [4, 9, 12, 14, 16, 19, 24, 29],
+  "VIGOR": [2, 7, 17, 22, 27],
+  "FATIGA": [5, 10, 15, 20, 25]
+};
+
+const pomsItemTexts = [
+  "Intranquilo","Enérgico","Desamparado","Furioso","Sin fuerzas","Deprimido",
+  "Lleno de energía","Inquieto","Molesto","Agotado","Agitado","Luchador",
+  "Desdichado","Irritable","Cansado","Amargado","Animado","Nervioso",
+  "Enfadado","Exhausto","Tenso","Vigoroso","Triste","Enojado","Fatigado",
+  "Infeliz","Activo","Relajado","De mal genio"
+];
+
+const pomsScaleLabels = ["Nada","Un poco","Moderadamente","Bastante","Muchísimo"];
+
+function getAnswerValue(itemNumber) {
+  const r = window.pomsResponses || [];
+  return r[itemNumber - 1];
+}
+
+function getAnswerLabel(value) {
+  return value === null || value === undefined ? "Sin respuesta" : pomsScaleLabels[value];
+}
+
+function showReview() {
+  const panel = document.getElementById("reviewPanel");
+  const content = document.getElementById("reviewContent");
+  if (!panel || !content) return;
+
+  content.innerHTML = Object.entries(pomsCategories).map(([category, itemNumbers]) => {
+    const list = itemNumbers.map(n => {
+      const value = getAnswerValue(n);
+      return `<div class="review-item">
+        <div class="review-question">${n}. ${pomsItemTexts[n-1]}</div>
+        <div class="review-answer">${getAnswerLabel(value)} <span>(${value ?? "—"})</span></div>
+      </div>`;
+    }).join("");
+
+    return `<div class="review-category"><h3>${category}</h3>${list}</div>`;
+  }).join("");
+
+  panel.classList.remove("hidden");
+  panel.scrollIntoView({behavior:"smooth", block:"start"});
+}
+
+function downloadPDF() {
+  const scores = window.pomsScores;
+  if (!scores) {
+    alert("Primero debes completar el cuestionario.");
+    return;
+  }
+
+  const printWindow = window.open("", "_blank");
+  if (!printWindow) {
+    alert("El navegador ha bloqueado la ventana. Permite ventanas emergentes para esta página.");
+    return;
+  }
+
+  const maxScores = {"TENSIÓN":24,"DEPRESIÓN":20,"CÓLERA":32,"VIGOR":20,"FATIGA":20};
+
+  const rows = Object.entries(scores).map(([dimension, value]) =>
+    `<tr><td>${dimension}</td><td>${value}%</td><td>${maxScores[dimension]} puntos máx.</td></tr>`
+  ).join("");
+
+  const svg = document.getElementById("chart");
+  const chart = svg ? svg.outerHTML : "";
+
+  const answerSections = Object.entries(pomsCategories).map(([category, nums]) => {
+    const rows = nums.map(n => {
+      const value = getAnswerValue(n);
+      return `<tr><td>${n}. ${pomsItemTexts[n-1]}</td><td>${getAnswerLabel(value)}</td><td>${value ?? "—"}</td></tr>`;
+    }).join("");
+    return `<h2>${category}</h2><table><thead><tr><th>Pregunta</th><th>Respuesta</th><th>Valor</th></tr></thead><tbody>${rows}</tbody></table>`;
+  }).join("");
+
+  printWindow.document.write(`<!doctype html>
+<html><head><meta charset="utf-8"><title>Resultados POMS</title>
+<style>
+body{font-family:Arial,sans-serif;color:#111;margin:30px}
+h1{margin-bottom:4px} h2{margin-top:25px}
+.date{color:#666;margin-bottom:20px}
+table{width:100%;border-collapse:collapse;margin:10px 0 20px}
+th,td{border:1px solid #ccc;padding:7px;text-align:left}
+th{background:#f2f2f2}
+.chart{width:100%;max-width:800px;margin:10px 0 20px}
+.note{font-size:10px;color:#666}
+@media print{body{margin:12mm}}
+</style></head><body>
+<h1>Resultados POMS</h1>
+<div class="date">Versión española del POMS · ${new Date().toLocaleString("es-ES")}</div>
+<h2>Puntuaciones</h2>
+<table><thead><tr><th>Emoción</th><th>Porcentaje</th><th>Máximo</th></tr></thead><tbody>${rows}</tbody></table>
+<h2>Perfil gráfico</h2><div class="chart">${chart}</div>
+<h2>Respuestas</h2>${answerSections}
+<p class="note">Uso educativo. Este resultado no constituye un diagnóstico clínico.</p>
+<script>window.onload=function(){setTimeout(function(){window.print()},700)}<\/script>
+</body></html>`);
+
+  printWindow.document.close();
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  const pdfBtn = document.getElementById("pdfBtn");
+  const reviewBtn = document.getElementById("reviewBtn");
+  const closeReview = document.getElementById("closeReview");
+
+  if (pdfBtn) pdfBtn.addEventListener("click", downloadPDF);
+  if (reviewBtn) reviewBtn.addEventListener("click", showReview);
+  if (closeReview) closeReview.addEventListener("click", () => {
+    document.getElementById("reviewPanel").classList.add("hidden");
+  });
+});
